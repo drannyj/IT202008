@@ -13,7 +13,7 @@ $connection_string = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
 try{
 $db = new PDO($connection_string, $dbuser, $dbpass);
 echo "Connected.";
-$stmt = $db->prepare("CREATE TABLE IF NOT EXISTS `Users` (
+$stmt = $db->prepare("CREATE TABLE IF NOT EXISTS `Users2` (
 		`id` int AUTO_INCREMENT NOT NULL,
 		`email` varchar(100) NOT NULL  UNIQUE,
 		`password`  varchar(60) NOT NULL,
