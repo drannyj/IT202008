@@ -1,1 +1,1 @@
-Add content (IT202)
+IT202 Course Content
