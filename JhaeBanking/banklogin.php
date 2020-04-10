@@ -53,18 +53,47 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
 
 <html>
     <head>
-    <pre>Please login to Jhae Banking!</pre>   
+      <title> Please login! </title> 
     </head>
-    <body>
+    <style>
+      .body{
+      background-image: url(bankreg-background.jpg);
+      background-size: 2000px 1000px;
+      }
+      .back-form{
+        text-align: center;
+        vertical-align: middle;
+        background-color: red;
+        position: absolute;
+        left: 700px;
+        bottom: 0px;
+        width: 500px;
+        height: 1000px;
+        border: 2px solid black;   
+      }
+      .form{
+        background-color: #D0D0D0;
+        border: 2px solid black;
+        width: 250px;
+        height: 150px;
+        position: relative;
+        left: 115px;
+        top: 400px;
+      }
+    </style>
+    <body class = "body">
         <form name="loginform" action="banklogin.php" method="POST">
-            
-            <label for="user"><br> Username: </br></label>
-            <input type="text" id="user" name="username" placeholder="Username"/>
-            
-            <label for="pass"><br> Password: <br></label>
-            <input type="password" id="pass" name="password" placeholder="Password"/>
-            
-            <br><button type="submit">Done</button></br>
+            <div class = "back-form">
+              <div class = "form">
+                <label for="user"><br> Username: </br></label>
+                <input type="text" id="user" name="username" placeholder="Username"/>
+                
+                <label for="pass"><br> Password: <br></label>
+                <input type="password" id="pass" name="password" placeholder="Password"/>
+                
+                <br><button type="submit">Done</button></br>
+              </div>
+            </div>
         </form> 
     </body>
 </html>
