@@ -100,7 +100,7 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
       text-align: center;
       position: absolute;
       left: 800px;
-      top: 260px;
+      top: 300px;
       background-color: #D0D0D0;
       border: 2px solid black;
       width: 300px;

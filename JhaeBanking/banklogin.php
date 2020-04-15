@@ -28,10 +28,12 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
       if(password_verify($p, $password)){
         $acc = $fetch['id'];
         echo "Welcome " . $u . "! BANK ACCOUNT NUMBER: " . $acc;
-        $_SESSION[$u] = $u;
+        $_SESSION['username'] = $u;
         //echo var_export($_SESSION, true);
         if(isset($_SESSION[$u]))
-        echo ", YOUR SESSION HAS STARTED.";
+          $_SESSION['logged'] = true;
+          echo $u . ", YOUR SESSION HAS STARTED.";
+          header('Location: bankbuffpage.php');
         }
       else{
         echo "Sorry, that's the wrong password. Please try again.";
@@ -82,7 +84,7 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
       }
     </style>
     <body class = "body">
-        <form name="loginform" action="banklogin.php" method="POST">
+        <form name="loginform" method="POST"> 
             <div class = "back-form">
               <div class = "form">
                 <label for="user"><br> Username: </br></label>
@@ -91,7 +93,7 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
                 <label for="pass"><br> Password: <br></label>
                 <input type="password" id="pass" name="password" placeholder="Password"/>
                 
-                <br><button type="submit">Done</button></br>
+                <br><button type="submit" value ="Submit">Done</button></br>
               </div>
             </div>
         </form> 

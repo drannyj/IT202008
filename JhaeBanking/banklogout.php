@@ -11,6 +11,6 @@ if (ini_get("session.use.cookies")){
     $cook["secure"], $cook["httponly"]
     );
 }
-header( "refresh:2;url=https://web.njit.edu/~drj27/IT202008/JhaeBanking/banklogin.php" );
+header("refresh:2;url=https://web.njit.edu/~drj27/IT202008/JhaeBanking/banklogin.php");
 exit();
 ?>
