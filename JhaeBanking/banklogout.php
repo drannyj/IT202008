@@ -1,8 +1,12 @@
 <?php
+ini_set('display_errors',1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 session_unset();
 session_destroy();
-echo "You have been logged out. Thanks for visiting! :)";
+echo "You have been logged out. :(";
 //echo var_export($_SESSION, true);
 if (ini_get("session.use.cookies")){
     $cook = session_get_cookie_params();

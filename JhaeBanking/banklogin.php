@@ -1,8 +1,8 @@
 <?php
 //Error Handling
-ini_set('display_errors',1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+#ini_set('display_errors',1);
+#ini_set('display_startup_errors', 1);
+#error_reporting(E_ALL);
 
 session_start();
 
@@ -10,13 +10,10 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 $u = $_POST['username'];
 $p = $_POST['password'];
 
-require("config.php");
-$connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
-
   try{
-    $d = new PDO($connectionString, $dbuser, $dbpass);
+    require('db/dbconnect.php');
     $sesh = $d->prepare("SELECT id, username, password from 
-            `BANKING INFORMATION` where username = :username LIMIT 1");
+            `BANKING INFORMATION` where username = :username");
     $info = array(":username" => $u);
     $sesh->execute($info);
     $fetch = $sesh->fetch(PDO::FETCH_ASSOC);
@@ -26,21 +23,21 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
     if($fetch){
       $password = $fetch['password'];
       if(password_verify($p, $password)){
-        $acc = $fetch['id'];
-        echo "Welcome " . $u . "! BANK ACCOUNT NUMBER: " . $acc;
         $_SESSION['username'] = $u;
         //echo var_export($_SESSION, true);
-        if(isset($_SESSION[$u]))
+        if(isset($_SESSION['username'])){
+          require('accountinfo.php');
+          $_SESSION['account'] = $acc;
           $_SESSION['logged'] = true;
-          echo $u . ", YOUR SESSION HAS STARTED.";
-          header('Location: bankbuffpage.php');
+          header("refresh:0;url=accountchoice.php");
+          }
         }
       else{
-        echo "Sorry, that's the wrong password. Please try again.";
+        echo "<div class = 'notif'>Sorry, that's the wrong password. Please try again.</div>";
         }
       }
     else{
-      echo "Sorry, you've entered the wrong username :(.";
+      echo "<div class = 'notif'>Sorry, you've entered the wrong username :(.</div>";
       }
     }
   catch(Exception $E){
@@ -58,6 +55,18 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
       <title> Please login! </title> 
     </head>
     <style>
+      .notif{
+        text-align: center;
+        position: relative;
+        background-color: #FFFFFF;
+        border: 2px solid black;
+        width: 500px;
+        margin: 1px;
+      }
+      .whole{
+      background-image: url(bankreg-background.jpg);
+      background-size: 2000px 1000px;
+    }
       .body{
       background-image: url(bankreg-background.jpg);
       background-size: 2000px 1000px;
@@ -96,6 +105,9 @@ $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
                 <br><button type="submit" value ="Submit">Done</button></br>
               </div>
             </div>
+        </form>
+        <form action = 'bankregistration.php'>
+            <br><button type="submit">Don't Have an Account?</button></br>
         </form> 
     </body>
 </html>

@@ -4,30 +4,35 @@ ini_set('display_errors',1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+
 if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['confirm'])){
   $u = $_POST['username'];
   $e = $_POST['email'];
   $p = $_POST['password'];
   $c = $_POST['confirm']; 
+  $t = $_POST['type'];
+  $m = $_POST['min'];
 
   if($u == ''){
-    echo "<pre>Please enter a username.</pre>";
+    echo "<div class = 'notif'>Please enter a username.</div>";
   }
 
   if($p == ''){
-    echo "<pre>Please enter a password.</pre>";
+    echo "<div class = 'notif'>Please enter a password.</div>";
   }
   else{
     if($p != $c){
-      echo "Your passwords don't match. Try again";
+      echo "<div class = 'notif'>Your passwords don't match. Try again</div>";
     }
     else{
+      if($m < 5){
+        echo "<div class = 'notif'>You do not meet the minimum required deposit.</div>";
+      }else{
       $p = password_hash($p, PASSWORD_BCRYPT);
-      require("config.php");
-      $connectionString = "mysql:host=$dbhost;dbname=$dbdatabase;charset=utf8mb4";
 
       try{
-        $d = new PDO($connectionString, $dbuser, $dbpass);
+        require('db/dbconnect.php');
         
         $x = true;
         $check = $d->prepare("SELECT count(*) FROM `BANKING INFORMATION` where username = '$u'");
@@ -48,10 +53,10 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
         }
         
         if(!$x){
-          echo "Sorry, that username is taken.";
+          echo "<div class = 'notif'>Sorry, that username is taken.</div>";
         }
         if(!$y){
-          echo "Sorry, that email is already registered.";
+          echo "<div class = 'notif'>Sorry, that email is already registered.</div>";
         }
         if($x and $y){
           $insert = $d->prepare("INSERT INTO `BANKING INFORMATION` 
@@ -60,7 +65,23 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
           $info = array(":username"=>$u, ":password"=>$p,":email"=>$e);
           $insert->execute($info);
           //echo var_export($insert->errorInfo(), true);
-          echo $u . ", You've been registered with Jhae Banking. Thank you!";
+          echo "<div class = 'notif'>" . $u . ", You've been registered with Jhae Banking. Thank you! </div>";
+
+          $insert = $d->prepare("SELECT id from `BANKING INFORMATION` WHERE username = '$u'");
+          $insert->execute();
+          $r = $insert->fetch();
+          
+          $_SESSION['logged'] = true;
+          $_SESSION['username'] = $u;
+          $_SESSION['type'] = $t;
+          require('accounthandling.php');
+          require('accountinfo.php');
+          $_SESSION['account'] = $acc;
+          
+          $_SESSION['dep'] = $m;
+
+          header("Location: initialdepost.php");
+          
         }
       }
       catch(Exception $E){
@@ -68,6 +89,7 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
         exit();
         }
       }
+    }
     }
 }
 ?>
@@ -77,7 +99,8 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
   <title>Welcome to Jhae Banking!</titLe>
   
   <head>
-  
+    <script>
+    </script>
   </head>
   
   <style>
@@ -88,7 +111,7 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
 
     .title{
       text-align: center;
-      position: relative;
+      position: absolute;
       left: 700px;
       top: 150px;
       background-color: red;
@@ -105,34 +128,52 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
       border: 2px solid black;
       width: 300px;
       margin: 10px;
+    }
 
+    .notif{
+      text-align: center;
+      position: relative;
+      background-color: #FFFFFF;
+      border: 2px solid black;
+      width: 500px;
+      margin: 1px;
     }
   </style>
     
     <body class = "whole">
+
       <div class="title">
-      <br><pre> Welcoming to Jhae Banking!
-      When you're done filling in the form, please hit Submit! </pre></br>
+          <br><pre> Welcoming to Jhae Banking!
+          When you're done filling in the form, please hit Submit! </pre></br>
+      </div>
       
-      </div>
       <div class = "body">
-      <form name="reg" action="bankregistration.php" method="POST">
+          <form name="reg" action="bankregistration.php" method="POST">
 
-      <label for="user"><br> Username: </br></label>
-      <input type="text" id="user" name="username" placeholder="Username"/>
-       
-      <label for="email"><br> Email: </br></label>
-      <input type="email" id="email" name="email" placeholder="Email"/>
+              <label for="user"><br> Username: </br></label>
+              <input type="text" id="user" name="username" placeholder="Username"/>
+              
+              <label for="email"><br> Email: </br></label>
+              <input type="email" id="email" name="email" placeholder="Email"/>
 
-      <label for="pass"><br> Password: <br></label>
-      <input type="password" id="pass" name="password" placeholder="Password"/>
-        
-      <label for="conf"><br>Confirm Password:<br></label>
-      <input type="password" id="conf" name="confirm" placeholder="Confirm Password"/>
+              <label for="pass"><br> Password: <br></label>
+              <input type="password" id="pass" name="password" placeholder="Password"/>
+                
+              <label for="conf"><br>Confirm Password:<br></label>
+              <input type="password" id="conf" name="confirm" placeholder="Confirm Password"/>
 
-      <br><button type="submit">Done</button></br>
-      </div>
-      </form>
+              <label for="type"><br>Account?<br></label>
+              <select name = "type" id="type"><br>
+                  <option value = "Checkings">Checkings</option>
+              </br></select>
+              <br><input type = 'number' id = 'min' name = "min" placeholder = "Minimum $5 Deposit"></br>
+              <br><button type="submit">Done</button></br>
+          
+          </form>
+    </div>
+    <form action = 'banklogin.php'>
+        <br><button type="submit">Have an account already?</button></br>
+    </form>
     </body>
 
 </html>
